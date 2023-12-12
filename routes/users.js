@@ -4,10 +4,20 @@ var productHelper = require('../helpers/product-helpers')
 const userHelper = require('../helpers/user-helpers');
 const { response, render } = require('../app');
 
+// function that verifies wether a user is loggedIn by checking the session 
+const verifyLogin=(req,res,next)=>{
+  if(req.session.userLoggedIn){
+    next()
+  }else{
+    res.redirect('/login')
+  }
+}
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.render('user/view-products');
+router.get('/',verifyLogin,function(req, res, next) {
+  let user= req.session.user
+  res.render('user/view-products',{user});
+  
 });
 
 // load signup page
@@ -41,6 +51,8 @@ router.get('/login',(req,res)=>{
 router.post('/login',(req,res)=>{
   userHelper.doLogin(req.body).then((response)=>{
     if(response.status){
+      req.session.user=response.user
+      req.session.userLoggedIn=true
       res.redirect('/')
     }else{
       res.render('user/login',{response})
@@ -50,4 +62,9 @@ router.post('/login',(req,res)=>{
 
 })
 
+//loggin out
+router.get('/logout',(req,res)=>{
+  req.session.destroy()
+  res.redirect('/login')
+})
 module.exports = router;
