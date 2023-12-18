@@ -1,0 +1,25 @@
+<section>
+    <div class="container">
+        <div class="row mt-4">
+            <a href="/admin/add-product" class="btn btn-success ml-auto mb-4">Add Product</a>
+        </div>
+        <table class="table mt-5" id="productsTable">
+          <thead>
+            <tr>
+              <th scope="col">No</th>
+              <th scope="col">Name</th>
+              <th scope="col">Email</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each users}}
+            <tr>
+                <td scope="col">{{@index}}</td>
+                <td scope="col">{{this.Name}}</td>
+                <td scope="col">{{this.Email}}</td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+    </div>
+</section>

@@ -14,9 +14,11 @@ const verifyLogin=(req,res,next)=>{
 }
 
 /* GET users listing. */
-router.get('/',verifyLogin,function(req, res, next) {
+router.get('/',async(req, res)=>{
   let user= req.session.user
-  res.render('user/view-products',{user});
+  
+  products = await productHelper.getAllProducts()
+  res.render('user/view-products',{user,products});
   
 });
 
@@ -66,5 +68,41 @@ router.post('/login',(req,res)=>{
 router.get('/logout',(req,res)=>{
   req.session.destroy()
   res.redirect('/login')
+})
+
+// loading cart page
+router.get('/cart',verifyLogin,async(req,res)=>{
+  //checking first if the user have cart if so just loading it or else creating a cart for user with  user id
+  cartProducts = await userHelper.getCart(req.session.user._id)
+  console.log(cartProducts)
+  if(cartProducts.length>0){
+    total = await userHelper.getTotalAmount(req.session.user._id)
+  }
+  res.render('user/cart',{cartProducts,user:req.session.user})
+})
+
+//adding item to cart (request using ajax)
+router.get('/add-product-cart/:id',(req,res)=>{
+  proId=req.params.id
+  userHelper.addToCart(req.session.user._id,proId).then((response)=>{
+    res.json({status:true})
+  })
+})
+
+//removing products from cart regardless of quantity
+router.get('/remove-product/:proId/:cartId',(req,res)=>{
+  proId = req.params.proId
+  cartId = req.params.cartId
+  userHelper.removeCartItem(cartId,proId).then((response)=>{
+    res.redirect('/cart')
+  })
+})
+
+//change item quantity
+router.post('/change-quantity',(req,res)=>{
+
+  userHelper.changeItemQuantity(req.body).then((response)=>{
+    res.json({status:true})
+  })
 })
 module.exports = router;

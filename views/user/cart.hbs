@@ -1,0 +1,46 @@
+<section class="h-100 h-custom">
+  <div class="container ">
+    {{#if cartProducts}}
+    <table class="table mt-5">
+        <thead>
+            <tr>
+                <th scope="col">Item</th>
+                <th scope="col">Title</th>
+                <th scope="col">Price</th>
+                <th scope="col">quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each cartProducts}}
+            <tr>
+                <td><img style="width: 70px;height: 70px;" src="/product-images/{{this.product._id}}.jpg" alt=""></td>
+                <td>{{this.product.Name}}</td>
+                <td>{{this.product.Price}}</td>
+                <td>
+                    <button class="cart-item-count mr-3" onclick="changeProductQuantity('{{this._id}}','{{this.product._id}}',-1)">-</button>
+                    <span id="{{this.product._id}}">{{this.quantity}}</span>
+                    <button class="cart-item-count ml-3" onclick="changeProductQuantity('{{this._id}}','{{this.product._id}}',1)">+</button>
+                </td>
+                <td>
+                    <a class="btn btn-danger" href="/remove-product/{{this.product._id}}/{{this._id}}">Remove</a>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    <hr>
+    <div class="float-right pr-5">
+        <h3 class="float-left mr-5 ">Total: <span id="total"></span> AED</h3>
+        <a href="" class="btn btn-success mt-3" style="width:100%;" ><b>Place Order</b></a>
+    </div>
+    {{else}}
+    <div class="container text-center">
+        <h1>No items in your cart</h1>
+        <p>Explore our products and add them to your cart.</p>
+    </div>
+    {{/if}}
+
+          
+  </div>
+</section>
+

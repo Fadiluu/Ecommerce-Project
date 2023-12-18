@@ -29,7 +29,7 @@ module.exports={
         })
     },
 
-
+    //editting product from admin panel
     updateProduct:(product,proId)=>{
         return new Promise((resolve, reject) => {
             db.get().collection(collection.PRODUCT_COLLECTION).updateOne({_id:new objectID(proId)},{
@@ -42,6 +42,23 @@ module.exports={
             }).then(()=>{
                 resolve()
             })
+        })
+    },
+
+    //deleting product (admin)
+    deleteProduct:(proId)=>{
+        return new Promise((resolve, reject) => {
+            db.get().collection(collection.PRODUCT_COLLECTION).deleteOne({_id:new objectID(proId)}).then(()=>{
+                resolve()
+            })
+        })
+    },
+
+    //getting all users details 
+    getAllUsers:()=>{
+        return new Promise((resolve, reject) => {
+            let users = db.get().collection(collection.USER_COLLECTION).find().toArray()
+            resolve(users)
         })
     }
 
