@@ -16,9 +16,13 @@ const verifyLogin=(req,res,next)=>{
 /* GET users listing. */
 router.get('/',async(req, res)=>{
   let user= req.session.user
+  cartCount=null  
+  if(req.session.user){
+    cartCount= await userHelper.getCartCount(req.session.user._id)
+  }
   
   products = await productHelper.getAllProducts()
-  res.render('user/view-products',{user,products});
+  res.render('user/view-products',{user,products,cartCount});
   
 });
 
@@ -73,12 +77,13 @@ router.get('/logout',(req,res)=>{
 // loading cart page
 router.get('/cart',verifyLogin,async(req,res)=>{
   //checking first if the user have cart if so just loading it or else creating a cart for user with  user id
+  total=0
   cartProducts = await userHelper.getCart(req.session.user._id)
   console.log(cartProducts)
   if(cartProducts.length>0){
     total = await userHelper.getTotalAmount(req.session.user._id)
   }
-  res.render('user/cart',{cartProducts,user:req.session.user})
+  res.render('user/cart',{cartProducts,user:req.session.user,total})
 })
 
 //adding item to cart (request using ajax)
@@ -99,10 +104,45 @@ router.get('/remove-product/:proId/:cartId',(req,res)=>{
 })
 
 //change item quantity
-router.post('/change-quantity',(req,res)=>{
-
-  userHelper.changeItemQuantity(req.body).then((response)=>{
-    res.json({status:true})
+router.post('/change-quantity',(req,res)=>{ 
+  userHelper.changeItemQuantity(req.body).then(async(response)=>{
+    // response.total=0
+    response.total=await userHelper.getTotalAmount(req.body.userId)
+    res.json(response)
   })
 })
+
+//loading place order page
+router.get('/place-order',verifyLogin,async(req,res)=>{
+  total=await userHelper.getTotalAmount(req.session.user._id)
+  res.render('user/place-order',{user:req.session.user,total})
+})
+
+router.post('/place-order',async(req,res)=>{
+  // getting the product list 
+  products = await userHelper.getProductList(req.body.userId)
+  //getting total amount
+  total = await userHelper.getTotalAmount(req.body.userId)
+  //placing the order
+  userHelper.placeOrder(req.body,products,total).then((response)=>{
+    if(req.body['payment-method']==='COD'){
+      res.json({codeSuccess:true})
+    }else{
+
+    }
+  })
+})
+
+
+//getting order succes page
+router.get('/order-success',verifyLogin,(req,res)=>{
+  res.render('user/order-success',{user:req.session.user})
+})
+
+//viewing order page
+router.get('/orders',verifyLogin,async(req,res)=>{
+  orders= await userHelper.getUserOrder(req.session.user._id)
+  res.render('user/view-orders',{user:req.session.user,orders})
+})
 module.exports = router;
+  
