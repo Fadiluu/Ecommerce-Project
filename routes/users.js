@@ -124,15 +124,22 @@ router.post('/place-order',async(req,res)=>{
   //getting total amount
   total = await userHelper.getTotalAmount(req.body.userId)
   //placing the order
-  userHelper.placeOrder(req.body,products,total).then((response)=>{
+  userHelper.placeOrder(req.body,products,total).then((orderId)=>{
     if(req.body['payment-method']==='COD'){
-      res.json({codeSuccess:true})
+      res.json({codSuccess:true})
     }else{
-
+      //  creating an order id first for payment 
+      // userHelper.generateRazorpay(total,orderId).then((response)=>{
+      //   res.json(response)
+      // })
     }
   })
 })
 
+//verifying the payment signature
+router.post('/verify-payment',(req,res)=>{
+  console.log(req.body)
+})
 
 //getting order succes page
 router.get('/order-success',verifyLogin,(req,res)=>{
@@ -144,5 +151,12 @@ router.get('/orders',verifyLogin,async(req,res)=>{
   orders= await userHelper.getUserOrder(req.session.user._id)
   res.render('user/view-orders',{user:req.session.user,orders})
 })
+
+//getting each orders product details quantity etc.
+router.get('/view-order-products/:id',verifyLogin,async(req,res)=>{
+  orderProducts = await userHelper.getOrderProductDetails(req.params.id)
+  res.render('user/view-order-products',{user:req.session.user,orderProducts})
+})
+
 module.exports = router;
   

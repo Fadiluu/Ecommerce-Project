@@ -73,4 +73,10 @@ router.get('/view-users',async(req,res)=>{
   res.render('admin/all-users',{admin:true,users})
 
 })
+
+//viewing all  orders (for admin)
+router.get('/all-orders',async(req,res)=>{
+  orders= await productHelper.getAllOrders()
+  res.render('admin/all-orders',{admin:true,orders})
+})
 module.exports = router;

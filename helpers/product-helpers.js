@@ -56,9 +56,31 @@ module.exports={
 
     //getting all users details 
     getAllUsers:()=>{
-        return new Promise((resolve, reject) => {
-            let users = db.get().collection(collection.USER_COLLECTION).find().toArray()
+        return new Promise(async(resolve, reject) => {
+            let users = await db.get().collection(collection.USER_COLLECTION).find().toArray()
             resolve(users)
+        })
+    },
+
+    //getting all orders, joining with user table to get user details
+    getAllOrders:()=>{
+        return new Promise(async(resolve, reject) => {
+            let allOrders = await  db.get().collection(collection.ORDER_COLLECTION).aggregate([
+                {
+                    $lookup:{
+                        from:"users",
+                        localField:"userId",
+                        foreignField:"_id",
+                        as:'userDetails'
+                    }
+                },
+                {
+                    $project:{
+                        delivery:1,price:1,paymentMethod:1,orderDate:1,status:1,userInfo:{$arrayElemAt:['$userDetails',0]}
+                    }
+                }
+            ]).toArray()
+            resolve(allOrders)
         })
     }
 

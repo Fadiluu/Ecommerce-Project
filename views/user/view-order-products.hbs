@@ -1,14 +1,14 @@
 <section>
   <div class="container mt-3">
     <div class="row">
-      {{#each products}}
+      {{#each orderProducts}}
       <div class="col-md-3 ml-5 mt-5 ">
         <div class="card" style="width: 18rem;">
-          <img class="card-img-top" style="height: 18rem;" src="/product-images/{{this._id}}.jpg" alt="Card image cap">
+          <img class="card-img-top" style="height: 18rem;" src="/product-images/{{this.product._id}}.jpg" alt="Card image cap">
           <div class="card-body">
-            <h5 class="card-title">{{this.Name}}</h5>
-            <p>{{this.Price}}</p>
-            <p class="card-text">{{this.Description}}</p>
+            <h5 class="card-title">{{this.product.Name}}</h5>
+            <p>{{this.product.Price}}</p>
+            <p class="card-text">{{this.quantity}}</p>
           </div>
         </div>
       </div>
