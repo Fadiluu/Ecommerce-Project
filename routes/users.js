@@ -128,10 +128,10 @@ router.post('/place-order',async(req,res)=>{
     if(req.body['payment-method']==='COD'){
       res.json({codSuccess:true})
     }else{
-      //  creating an order id first for payment 
-      // userHelper.generateRazorpay(total,orderId).then((response)=>{
-      //   res.json(response)
-      // })
+      // creating an order id first for payment 
+      userHelper.generateRazorpay(total,orderId).then((response)=>{
+        res.json(response)
+      })
     }
   })
 })
@@ -139,6 +139,13 @@ router.post('/place-order',async(req,res)=>{
 //verifying the payment signature
 router.post('/verify-payment',(req,res)=>{
   console.log(req.body)
+  userHelper.verifyPaymentSignature(req.body).then(()=>{
+    userHelper.changeOrderStatus(req.body['order[receipt]']).then(()=>{
+      res.json({status:true})
+    })
+  }).catch(()=>{
+    res.json({status:false,errMsg:'Payment failed'})
+  })
 })
 
 //getting order succes page

@@ -326,6 +326,36 @@ module.exports={
                 }
               });
         })
-    } 
+    },
+    
+    //verify payment using payment signature
+    verifyPaymentSignature:(details)=>{
+        return new Promise((resolve, reject) => {
+            const crypto = require('crypto');
+            let hmac = crypto.createHmac('sha256', '61cHiLdYJNqRncsW0GP7RvC5');
+            hmac.update(details['payment[razorpay_order_id]']+ "|" + details['payment[razorpay_payment_id]'] , '61cHiLdYJNqRncsW0GP7RvC5');
+            hmac=hmac.digest('hex')
+            if(hmac===details['payment[razorpay_signature]']){
+                resolve()
+            }else{
+                reject()
+            }
+        })
+    },
+
+    // changing order status from pending to placed when online payment is successfull  
+    changeOrderStatus:(orderId)=>{
+        return new Promise((resolve, reject) => {
+            db.get().collection(collection.ORDER_COLLECTION).updateOne({_id:new ObjectId(orderId)},
+            {
+                $set:{
+                    status:'placed'
+                }
+            }).then(()=>{
+                resolve()
+            })
+        })
+    }
+
 }
 

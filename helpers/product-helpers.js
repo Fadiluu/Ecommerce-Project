@@ -32,6 +32,7 @@ module.exports={
     //editting product from admin panel
     updateProduct:(product,proId)=>{
         return new Promise((resolve, reject) => {
+            product.Price=parseInt(product.Price)
             db.get().collection(collection.PRODUCT_COLLECTION).updateOne({_id:new objectID(proId)},{
                 $set:{
                     Name:product.Name,
