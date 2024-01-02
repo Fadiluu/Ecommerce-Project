@@ -12,6 +12,11 @@ const verifyLogin=(req,res,next)=>{
     res.redirect('/login')
   }
 }
+// module.exports={
+//   notAdmin:()=>{
+//     res.redirect('/')
+//   }
+// }
 
 /* GET users listing. */
 router.get('/',async(req, res)=>{
@@ -56,7 +61,12 @@ router.get('/login',(req,res)=>{
 //login user
 router.post('/login',(req,res)=>{
   userHelper.doLogin(req.body).then((response)=>{
-    if(response.status){
+    if(response.status && response.user.admin){
+      req.session.user=response.user
+      req.session.userLoggedIn=true
+      res.redirect('/admin')
+    }
+    else if(response.status){
       req.session.user=response.user
       req.session.userLoggedIn=true
       res.redirect('/')

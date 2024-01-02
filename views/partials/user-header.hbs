@@ -18,6 +18,11 @@
                     <a class="nav-link" href="/orders">Orders<span class="badge badge-danger" ></span></a>
                 </li>
             {{/if}}
+            {{#if user.admin}}
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin">Admin-Panel<span class="badge badge-danger" ></span></a>
+                </li>
+            {{/if}}
             </ul>
             <div class="dropdown">
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
